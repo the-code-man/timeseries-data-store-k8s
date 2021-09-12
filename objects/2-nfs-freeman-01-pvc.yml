@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-freeman-01
+  namespace: timeseries-datastore-dev
+spec:
+  storageClassName: nfs-freeman-1g
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 500Mi

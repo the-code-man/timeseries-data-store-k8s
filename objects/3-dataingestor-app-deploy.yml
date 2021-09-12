@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataingestor-app
+  labels:
+    app: data-ingestor-deploy
+  namespace: timeseries-datastore-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-ingestor
+  template:
+    metadata:
+      labels:
+        app: data-ingestor
+    spec:
+      volumes:
+      - name: freeman-nfs
+        persistentVolumeClaim:
+          claimName: pvc-nfs-01
+      containers:
+      - name: dataingestor
+        image: codeman8182/timeseries-ds-data-ingestor:1.0.0
+        volumemounts:
+        - name: freeman-nfs
+          mountPath: /db

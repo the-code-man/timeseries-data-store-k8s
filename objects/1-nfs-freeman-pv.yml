@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-freeman
+  labels:
+    type: file-share-1g
+spec:
+  storageClassName: nfs-freeman-1g
+  capacity:
+    storage: 1Gi
+  accessModes:
+  - ReadWriteMany
+  nfs:
+    server: 192.168.10.8
+    path: "/srv/nfs4/timeseries-datastore"
