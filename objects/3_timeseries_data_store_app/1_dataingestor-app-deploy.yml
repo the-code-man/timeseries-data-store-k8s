@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataingestor-deploy
+  labels:
+    app: data-ingestor-deploy
+  namespace: timeseries-datastore-dev
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: data-ingestor
+  template:
+    metadata:
+      labels:
+        app: data-ingestor
+    spec:
+      volumes:
+      - name: freeman-nfs
+        persistentVolumeClaim:
+          claimName: nfs-freeman-01
+      containers:
+      - name: dataingestor
+        image: codeman8182/timeseries-ds-data-ingestor:1.0.0
+        volumeMounts:
+        - name: freeman-nfs
+          mountPath: /db
+        envFrom:
+        - configMapRef:
+            name: timeseries-ds-config
+        env:
+        - name: DataStoreSettings__ConnectionString
+          value: "/db/tsdatastore/timeseries.db"
+        - name: MessageBusSettings__UserName
+          valueFrom:
+            secretKeyRef:
+              name: timeseries-user-credentials
+              key: username
+        - name: MessageBusSettings__Password
+          valueFrom:
+            secretKeyRef:
+              name: timeseries-user-credentials
+              key: password            

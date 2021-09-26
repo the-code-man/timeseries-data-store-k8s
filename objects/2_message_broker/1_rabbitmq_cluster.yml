@@ -1,0 +1,18 @@
+# Note - RabbitMq operator must be installed before applying this manifest. Please see --> https://www.rabbitmq.com/kubernetes/operator/operator-overview.html
+# Note 2 - Install Physical Volume Provisioner - ONLY FOR NON-PRODUCTION ENVIRONMENT SINCE hostpath IS USED --> https://github.com/rancher/local-path-provisioner
+# Note 3 - Install Rabbitmq message topology operator --> https://www.rabbitmq.com/kubernetes/operator/install-topology-operator.html
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: timeseries-datastore-messagebroker
+  namespace: timeseries-datastore-dev
+spec:
+  replicas: 1
+  resources: 
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 800m
+      memory: 1Gi

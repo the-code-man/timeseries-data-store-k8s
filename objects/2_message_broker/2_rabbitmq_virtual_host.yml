@@ -1,0 +1,9 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: Vhost
+metadata:
+  name: default-vhost
+  namespace: timeseries-datastore-dev
+spec:
+  name: timeseries-datastore-bus
+  rabbitmqClusterReference:
+    name: timeseries-datastore-messagebroker

@@ -1,0 +1,59 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avgcalculator
+  labels:
+    app: avg-calculator-deploy
+  namespace: timeseries-datastore-dev
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: avgcalculator
+  template:
+    metadata:
+      labels:
+        app: avgcalculator
+    spec:
+      volumes:
+      - name: freeman-nfs
+        persistentVolumeClaim:
+          claimName: nfs-freeman-01
+      containers:
+      - name: avgcalculator
+        image: codeman8182/timeseries-ds-avg-calculator:1.0.0
+        volumeMounts:
+        - name: freeman-nfs
+          mountPath: /db
+        envFrom:
+        - configMapRef:
+            name: timeseries-ds-config
+        env:
+        - name: DataStoreSettings__ConnectionString
+          value: "/db/tsdatastore/timeseries-avg.db"
+        - name: MessageBusSettings__UserName
+          valueFrom:
+            secretKeyRef:
+              name: timeseries-user-credentials
+              key: username
+        - name: MessageBusSettings__Password
+          valueFrom:
+            secretKeyRef:
+              name: timeseries-user-credentials
+              key: password            
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: timeseries-datastore-avgcalculator
+  namespace: timeseries-datastore-dev
+spec:
+  type: ClusterIP
+  selector:
+    app: avgcalculator
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
